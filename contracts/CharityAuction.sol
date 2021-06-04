@@ -47,3 +47,43 @@ contract CharityAuctionThreshold is CharityAuction {
         selfdestruct(charityAddress);
     }
 }
+
+contract CharityAuctionTimeout is CharityAuction {
+    uint timeout;
+
+    constructor(string memory _initialMessage, address _charityAddress, uint _timeout) CharityAuction(_initialMessage, _charityAddress) {
+        timeout = block.timestamp + _timeout;
+    }
+
+    function changeMessage(string memory _newMessage) override virtual public payable {
+        require(msg.value > lastDonation);
+        if(block.timestamp >= timeout) {
+            donateToCharity();
+        }
+        message = _newMessage;
+    }
+
+    // Is self destructing really the right choice here?
+    function donateToCharity() internal override {
+        selfdestruct(charityAddress);
+    }
+}
+
+// Fun variation, or maybe its just the beer talking 
+contract CharityAuctionTimeoutBidding is CharityAuctionTimeout {
+    uint incrementalTimeout;
+
+    constructor(string memory _initialMessage, address _charityAddress, uint _timeout) CharityAuctionTimeout(_initialMessage, _charityAddress, _timeout) {
+        incrementalTimeout = _timeout;
+    }
+
+    function changeMessage(string memory _newMessage) override public payable {
+        require(msg.value > lastDonation);
+        if(block.timestamp >= timeout) {
+            donateToCharity();
+        } else {
+            timeout += incrementalTimeout;
+        }
+        message = _newMessage;
+    }
+}
