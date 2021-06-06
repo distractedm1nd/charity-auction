@@ -38,6 +38,8 @@ contract CharityAuctionThreshold is CharityAuction {
     function changeMessage(string memory _newMessage) override public payable {
         require(msg.value > lastDonation);
         message = _newMessage;
+        lastDonater = msg.sender;
+        lastDonation = msg.value;
         if(address(this).balance + msg.value >= threshold) {
             donateToCharity();
         }
@@ -60,6 +62,8 @@ contract CharityAuctionTimeout is CharityAuction {
         if(block.timestamp >= timeout) {
             donateToCharity();
         }
+        lastDonater = msg.sender;
+        lastDonation = msg.value;
         message = _newMessage;
     }
 
@@ -84,6 +88,8 @@ contract CharityAuctionTimeoutBidding is CharityAuctionTimeout {
         } else {
             timeout += incrementalTimeout;
         }
+        lastDonater = msg.sender;
+        lastDonation = msg.value;
         message = _newMessage;
     }
 }

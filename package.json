@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/truffle-box/drizzle-box#readme",
   "dependencies": {
+    "@drizzle/react-plugin": "^1.5.3",
     "@openzeppelin/contracts": "^2.4.0",
     "sha3": "^2.1.4"
   }

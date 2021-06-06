@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/helper-builder-react-jsx": "^7.12.13",
     "@drizzle/react-components": "^1.5.1",
-    "@drizzle/react-plugin": "^1.5.1",
+    "@drizzle/react-plugin": "^1.5.3",
     "@drizzle/store": "^1.5.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
