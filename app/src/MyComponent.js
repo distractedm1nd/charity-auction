@@ -1,18 +1,17 @@
 import React, {useEffect, useState} from "react";
-import { newContextComponents } from "@drizzle/react-components";
 import { Card, EthAddress, Text, Heading, Button, Modal, Flex, Box, Input } from 'rimble-ui';
-const { AccountData, ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => {
   // destructure drizzle and drizzleState from props
-    let [donater, setDonater] = useState("");
-    let [donation, setDonation] = useState(0);
-    let [currentMessage, setMessage] = useState("");
+    let {lastDonater, lastDonation, message, changeMessage} = drizzle.contracts.CharityAuctionThreshold.methods;
+    let contract = drizzleState.contracts.CharityAuctionThreshold
+
+    const [isOpen, setIsOpen] = useState(false);
+    let [keyStore, setKeyStore] = useState({});
     let [newMessage, setNewMessage] = useState("");
     let [newDonation, setNewDonation] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
 
-    let {lastDonater, lastDonation, message, changeMessage} = drizzle.contracts.CharityAuctionThreshold.methods;
+
 
     const donate = () => {
         changeMessage(newMessage).call({value: newDonation});
@@ -20,9 +19,11 @@ export default ({ drizzle, drizzleState }) => {
     }
 
     const updateView = () => {
-        lastDonater().call().then(res => setDonater(res));
-        lastDonation().call().then(res => setDonation(res));
-        message().call().then(res => setMessage(res));
+        setKeyStore({
+            donaterDataKey: lastDonater.cacheCall(),
+            donationDataKey: lastDonation.cacheCall(),
+            messageDataKey: message.cacheCall(),
+        });
     }
 
     const closeModal = e => {
@@ -47,11 +48,11 @@ export default ({ drizzle, drizzleState }) => {
             To change the string, donate a higher amount than the last donater. All proceeds go to the address the owner set as beneficiary of the contract.
         </Text.p>
           <Text fontWeight={"bold"}>Last Message: </Text>
-          <Text.p>{currentMessage}</Text.p>
+          <Text.p>{contract.message[keyStore?.messageDataKey]?.value}</Text.p>
           <Text fontWeight={"bold"}>Last Donater: </Text>
-          <EthAddress address={donater}/>
+          <EthAddress address={contract.lastDonater[keyStore?.donaterDataKey]?.value}/>
           <Text fontWeight={"bold"}>Last Donation: </Text>
-          <Text.p>{donation}</Text.p>
+          <Text.p>{contract.lastDonation[keyStore?.donationDataKey]?.value}</Text.p>
           <Button onClick={openModal}>Donate (and change the string!)</Button>
           <Modal isOpen={isOpen}>
               <Card width={"420px"} p={0}>
@@ -69,7 +70,7 @@ export default ({ drizzle, drizzleState }) => {
 
                   <Box p={4} mb={3}>
                       <Heading.h3>Donate</Heading.h3>
-                      <Input required={true} placeholder={donation + 1} value={newDonation} onChange={(e) => setNewDonation(e.target.value)}/>
+                      <Input required={true} placeholder="100" value={newDonation} onChange={(e) => setNewDonation(e.target.value)}/>
                       <Input required={true} placeholder="New Message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
                   </Box>
 
@@ -81,7 +82,7 @@ export default ({ drizzle, drizzleState }) => {
                       justifyContent={"flex-end"}
                   >
                       <Button.Outline onClick={closeModal}>Cancel</Button.Outline>
-                      <Button ml={3} onClick={() => changeMessage(newMessage).call({value: newDonation}).then(res => console.log(res))}>Confirm</Button>
+                      <Button ml={3} onClick={donate}>Confirm</Button>
                   </Flex>
               </Card>
           </Modal>

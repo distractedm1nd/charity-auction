@@ -28,11 +28,15 @@ abstract contract CharityAuction {
 }
 
 contract CharityAuctionThreshold is CharityAuction {
-    uint threshold;
+    uint public threshold;
 
     // Uhh what is standard practice for where to set line breaks?
     constructor(string memory _initialMessage, address _charityAddress, uint _threshold) CharityAuction(_initialMessage, _charityAddress) {
         threshold = _threshold;
+    }
+
+    function remainingWei() public view returns (uint) {
+        return address(this).balance - threshold;
     }
 
     function changeMessage(string memory _newMessage) override public payable {
