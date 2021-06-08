@@ -11,10 +11,8 @@ export default ({ drizzle, drizzleState }) => {
     let [newMessage, setNewMessage] = useState("");
     let [newDonation, setNewDonation] = useState("");
 
-
-
     const donate = () => {
-        changeMessage(newMessage).call({value: newDonation});
+        changeMessage.cacheSend(newMessage, {value: newDonation});
         updateView();
     }
 
