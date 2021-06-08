@@ -2,7 +2,7 @@ import React from "react";
 import { DrizzleContext } from "@drizzle/react-plugin";
 import { Drizzle } from "@drizzle/store";
 import drizzleOptions from "./drizzleOptions";
-import MyComponent from "./MyComponent";
+import CharityAuctionThreshold from "./CharityAuctionThreshold";
 import "./App.css";
 
 const drizzle = new Drizzle(drizzleOptions);
@@ -19,7 +19,7 @@ const App = () => {
           }
 
           return (
-            <MyComponent drizzle={drizzle} drizzleState={drizzleState} />
+            <CharityAuctionThreshold drizzle={drizzle} drizzleState={drizzleState} />
           )
         }}
       </DrizzleContext.Consumer>

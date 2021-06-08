@@ -3,7 +3,7 @@ import { Card, EthAddress, Text, Heading, Button, Modal, Flex, Box, Input } from
 
 export default ({ drizzle, drizzleState }) => {
   // destructure drizzle and drizzleState from props
-    let {lastDonater, lastDonation, message, changeMessage} = drizzle.contracts.CharityAuctionThreshold.methods;
+    let {lastDonor, lastDonation, message, changeMessage} = drizzle.contracts.CharityAuctionThreshold.methods;
     let contract = drizzleState.contracts.CharityAuctionThreshold
 
     const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,7 @@ export default ({ drizzle, drizzleState }) => {
 
     const updateView = () => {
         setKeyStore({
-            donaterDataKey: lastDonater.cacheCall(),
+            donorDataKey: lastDonor.cacheCall(),
             donationDataKey: lastDonation.cacheCall(),
             messageDataKey: message.cacheCall(),
         });
@@ -43,12 +43,12 @@ export default ({ drizzle, drizzleState }) => {
       <Card className="section">
         <Heading as={"h2"}>Charity Auction</Heading>
         <Text.p>
-            To change the string, donate a higher amount than the last donater. All proceeds go to the address the owner set as beneficiary of the contract.
+            To change the string, donate a higher amount than the last donor. All proceeds go to the address the owner set as beneficiary of the contract.
         </Text.p>
           <Text fontWeight={"bold"}>Last Message: </Text>
           <Text.p>{contract.message[keyStore?.messageDataKey]?.value}</Text.p>
-          <Text fontWeight={"bold"}>Last Donater: </Text>
-          <EthAddress address={contract.lastDonater[keyStore?.donaterDataKey]?.value}/>
+          <Text fontWeight={"bold"}>Last Donor: </Text>
+          <EthAddress address={contract.lastDonor[keyStore?.donorDataKey]?.value}/>
           <Text fontWeight={"bold"}>Last Donation: </Text>
           <Text.p>{contract.lastDonation[keyStore?.donationDataKey]?.value}</Text.p>
           <Button onClick={openModal}>Donate (and change the string!)</Button>
