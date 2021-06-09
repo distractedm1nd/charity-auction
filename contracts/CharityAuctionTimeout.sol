@@ -8,12 +8,12 @@ contract CharityAuctionTimeout is CharityAuction {
     uint timeout;
 
     constructor(string memory _initialMessage, address _charityAddress, uint _timeInDays) CharityAuction(_initialMessage, _charityAddress) {
-        timeout = now + (_timeInDays * 1 days);
+        timeout = block.timestamp + (_timeInDays * 1 days);
     }
 
     function changeMessage(string memory _newMessage) override virtual public payable {
         require(msg.value > lastDonation);
-        if(now >= timeout) {
+        if(block.timestamp >= timeout) {
             withdrawalBalanceToCharity();
         }
         lastDonor = msg.sender;
