@@ -3,12 +3,13 @@ pragma solidity ^0.8.0;
 
 import "./CharityAuctionTimeout.sol";
 
-// Fun variation, or maybe its just the beer talking
 contract CharityAuctionTimeoutBidding is CharityAuctionTimeout {
     uint incrementalTimeout;
 
-    constructor(string memory _initialMessage, address _charityAddress, uint _timeout) CharityAuctionTimeout(_initialMessage, _charityAddress, _timeout) {
-        incrementalTimeout = _timeout;
+    constructor(string memory _initialMessage, address _charityAddress, uint _timeInDays)
+    CharityAuctionTimeout(_initialMessage, _charityAddress, _timeInDays)
+    {
+        incrementalTimeout = _timeInDays * 1 days;
     }
 
     function changeMessage(string memory _newMessage) override public payable {
