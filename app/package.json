@@ -7,12 +7,15 @@
     "@drizzle/react-components": "^1.5.3",
     "@drizzle/react-plugin": "^1.5.3",
     "@drizzle/store": "^1.5.3",
+    "@headlessui/react": "^1.2.0",
+    "@heroicons/react": "^1.0.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0",
     "rimble-ui": "^0.14.0",
     "sha3": "^1.2.6",
-    "styled-components": "^5.3.0"
+    "styled-components": "^5.3.0",
+    "tailwindcss": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
