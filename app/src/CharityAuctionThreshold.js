@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect, useState} from "react";
 import {Box, Button, Card, Flex, Heading, Input, Modal, Progress} from 'rimble-ui';
-import {CalendarIcon, CheckIcon, ChevronDownIcon, CurrencyDollarIcon, LinkIcon, PencilIcon, InformationCircleIcon} from '@heroicons/react/solid'
+import {CalendarIcon, CheckIcon, ChevronDownIcon, CurrencyDollarIcon, LinkIcon, PencilIcon, InformationCircleIcon, InboxInIcon, FingerPrintIcon} from '@heroicons/react/solid'
 import {Menu, Transition} from '@headlessui/react'
 
 function classNames(...classes) {
@@ -9,7 +9,7 @@ function classNames(...classes) {
 
 export default ({drizzle, drizzleState}) => {
     // destructure drizzle and drizzleState from props
-    let {lastDonor, lastDonation, message, changeMessage, threshold, remainingWei} = drizzle.contracts.CharityAuctionThreshold.methods;
+    let {lastDonor, lastDonation, message, changeMessage, threshold, remainingWei, charityAddress} = drizzle.contracts.CharityAuctionThreshold.methods;
     let contract = drizzleState.contracts.CharityAuctionThreshold
 
     const [isOpen, setIsOpen] = useState(false);
@@ -18,10 +18,13 @@ export default ({drizzle, drizzleState}) => {
     let [newDonation, setNewDonation] = useState("");
 
     let thresholdValue = contract.threshold[keyStore?.thresholdDataKey]?.value;
-    let remainingWeiValue = contract.remainingWei[keyStore?.remainingWei]?.value;
+    let charityAddressValue = contract.charityAddress[keyStore?.charityAddressDataKey]?.value;
+    let remainingWeiValue = contract.remainingWei[keyStore?.remainingWeiDataKey]?.value;
     let lastDonorValue = contract.lastDonor[keyStore?.donorDataKey]?.value;
     let lastDonationValue = contract.lastDonation[keyStore?.donationDataKey]?.value;
     let messageValue = contract.message[keyStore?.messageDataKey]?.value;
+
+    let progress = (thresholdValue - remainingWeiValue) / thresholdValue
 
     const donate = () => {
         changeMessage.cacheSend(newMessage, {value: newDonation});
@@ -35,6 +38,7 @@ export default ({drizzle, drizzleState}) => {
             messageDataKey: message.cacheCall(),
             remainingWeiDataKey: remainingWei.cacheCall(),
             thresholdDataKey: threshold.cacheCall(),
+            charityAddressDataKey: charityAddress.cacheCall(),
         });
     }
 
@@ -62,13 +66,19 @@ export default ({drizzle, drizzleState}) => {
                         </h2>
                         <div className="flex flex-col mt-1 sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
                             <div className="flex items-center mt-2 text-sm text-gray-500">
-                                <CurrencyDollarIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                                                    aria-hidden="true"/>
-                                Last Donation: {(lastDonationValue / 1e18).toFixed(18)} Ξ
+                                <FingerPrintIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                                             aria-hidden="true"/>
+                                Charity Address: {charityAddressValue}
                             </div>
                             <div className="flex items-center mt-2 text-sm text-gray-500">
-                                <CalendarIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true"/>
-                                Closing on January 9, 2020
+                                <InboxInIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                                                    aria-hidden="true"/>
+                                Total Received: {((thresholdValue - remainingWeiValue) / 1e18).toFixed(18)} Ξ
+                            </div>
+                            <div className="flex items-center mt-2 text-sm text-gray-500">
+                                <CurrencyDollarIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+                                                    aria-hidden="true"/>
+                                Goal: {(thresholdValue / 1e18).toFixed(18)} Ξ
                             </div>
                         </div>
                     </div>
@@ -186,11 +196,11 @@ export default ({drizzle, drizzleState}) => {
                 </Modal>
                 <div className={"flex items-stretch flex-col"}>
                     <div className="flex justify-center items-center mb-2 text-sm text-gray-500">
-                        {(thresholdValue - remainingWeiValue)/thresholdValue}% Complete
+                        {progress * 100}% Complete
                         <InformationCircleIcon className="flex-shrink-0 ml-1.5 h-5 w-5 text-gray-400"
                                                aria-hidden="true"/>
                     </div>
-                    <Progress value={(thresholdValue - remainingWeiValue) / thresholdValue} className="w-full"/>
+                    <Progress value={progress} className="w-full"/>
                 </div>
             </div>
         </div>

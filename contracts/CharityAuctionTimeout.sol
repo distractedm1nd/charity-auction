@@ -11,7 +11,7 @@ contract CharityAuctionTimeout is CharityAuction {
         timeout = block.timestamp + (_timeInDays * 1 days);
     }
 
-    function changeMessage(string memory _newMessage) override virtual public payable {
+    function changeMessage(string memory _newMessage) override virtual public payable requiresActiveCampaign {
         require(msg.value > lastDonation);
         if(block.timestamp >= timeout) {
             withdrawalBalanceToCharity();
@@ -23,6 +23,7 @@ contract CharityAuctionTimeout is CharityAuction {
 
     function withdrawalBalanceToCharity() internal override {
         charityAddress.transfer(address(this).balance);
+        campaignCompleted = true;
     }
 }
 

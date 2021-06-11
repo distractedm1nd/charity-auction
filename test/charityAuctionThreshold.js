@@ -36,12 +36,19 @@ contract("CharityAuctionThreshold", accounts => {
     assert.equal(threshold - remainingWei.toNumber(), balance);
   });
 
-  it("...should withdrawal balance after reaching threshold", async () => {
+  it("...should withdrawal balance and deactivate campaign after reaching threshold", async () => {
     const initialBalance = await web3.eth.getBalance(instance.address);
     assert.equal(initialBalance, 21);
+    assert.equal(await instance.campaignCompleted(), false);
     await instance.changeMessage("New Message 4", { from: accounts[2], value: 79});
     const newBalance = await web3.eth.getBalance(instance.address);
+    assert.equal(await instance.campaignCompleted(), true);
     assert.equal(newBalance, 0);
+  });
+
+  it("...should revert donations after threshold is reached", async () => {
+    assert.equal(await instance.campaignCompleted(), true);
+    await truffleAssert.reverts(instance.changeMessage("New Message 3", { from: accounts[1], value:  11}), "", "Message set although campaign is no longer active");
   });
 
 });

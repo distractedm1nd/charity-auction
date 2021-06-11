@@ -3,6 +3,19 @@
   "abi": [
     {
       "inputs": [],
+      "name": "campaignCompleted",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "charityAddress",
       "outputs": [
         {
@@ -71,7 +84,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_newMessage\",\"type\":\"string\"}],\"name\":\"changeMessage\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"charityAddress\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastDonation\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastDonor\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"message\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/ryan/charity-auction/contracts/CharityAuction.sol\":\"CharityAuction\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/ryan/charity-auction/contracts/CharityAuction.sol\":{\"keccak256\":\"0xd2cf7b8372492c25307b9811953af41900510a39974c8601dccaba70e779ff00\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d03c02d602a8a95a59eb2d1bc3458df8d848db76a76b7bad3d5b708eb3b1d762\",\"dweb:/ipfs/QmcKfmmTMMsfZzjiJkYhTDNiALevex6WLdt3xbSGEKj4BE\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.5+commit.a4f2e591\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"campaignCompleted\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_newMessage\",\"type\":\"string\"}],\"name\":\"changeMessage\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"charityAddress\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastDonation\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastDonor\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"message\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/ryan/charity-auction/contracts/CharityAuction.sol\":\"CharityAuction\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/ryan/charity-auction/contracts/CharityAuction.sol\":{\"keccak256\":\"0x8a0516057357828e7f8b77e3665472b76cdd056c415ee9384e8713037c2a3821\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a77d72746b8fe0dec25a107df08b5a92bdff6e886af363417d97584faa143def\",\"dweb:/ipfs/QmWxoST92f81PCwsxTzLDVrLCoTPjT5Uy3DooQErATkLZ1\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -79,16 +92,16 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\nabstract contract CharityAuction {\n    string public message;\n    address public lastDonor;\n    uint public lastDonation;\n\n    address payable public charityAddress;\n\n    constructor(string memory _initialMessage, address _charityAddress) {\n        message = _initialMessage;\n        lastDonation = 0;\n        charityAddress = payable(_charityAddress);\n    }\n\n    function changeMessage(string memory _newMessage) virtual public payable {\n        require(msg.value > lastDonation);\n        message = _newMessage;\n    }\n\n    // How will this get called from oracle? 🤔\n    function withdrawalBalanceToCharity() internal virtual;\n\n    receive() external payable {}\n}\n",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\nabstract contract CharityAuction {\n    string public message;\n    address public lastDonor;\n    uint public lastDonation = 0;\n    bool public campaignCompleted = false;\n\n    address payable public charityAddress;\n\n    constructor(string memory _initialMessage, address _charityAddress) {\n        message = _initialMessage;\n        charityAddress = payable(_charityAddress);\n    }\n\n    function changeMessage(string memory _newMessage) virtual public payable {\n        require(msg.value > lastDonation);\n        message = _newMessage;\n    }\n\n    // How will this get called from oracle? 🤔\n    function withdrawalBalanceToCharity() internal virtual;\n\n    modifier requiresActiveCampaign() {\n        require(!campaignCompleted);\n        _;\n    }\n\n    receive() external payable {}\n}\n",
   "sourcePath": "/Users/ryan/charity-auction/contracts/CharityAuction.sol",
   "ast": {
     "absolutePath": "/Users/ryan/charity-auction/contracts/CharityAuction.sol",
     "exportedSymbols": {
       "CharityAuction": [
-        57
+        66
       ]
     },
-    "id": 58,
+    "id": 67,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
@@ -109,9 +122,9 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": false,
-        "id": 57,
+        "id": 66,
         "linearizedBaseContracts": [
-          57
+          66
         ],
         "name": "CharityAuction",
         "nameLocation": "75:14:0",
@@ -125,7 +138,7 @@
             "name": "message",
             "nameLocation": "110:7:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
+            "scope": 66,
             "src": "96:21:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -153,7 +166,7 @@
             "name": "lastDonor",
             "nameLocation": "138:9:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
+            "scope": 66,
             "src": "123:24:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -177,13 +190,13 @@
           {
             "constant": false,
             "functionSelector": "661a5611",
-            "id": 7,
+            "id": 8,
             "mutability": "mutable",
             "name": "lastDonation",
             "nameLocation": "165:12:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
-            "src": "153:24:0",
+            "scope": 66,
+            "src": "153:28:0",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -200,18 +213,78 @@
                 "typeString": "uint256"
               }
             },
+            "value": {
+              "hexValue": "30",
+              "id": 7,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "180:1:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_0_by_1",
+                "typeString": "int_const 0"
+              },
+              "value": "0"
+            },
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "functionSelector": "0899077e",
+            "id": 11,
+            "mutability": "mutable",
+            "name": "campaignCompleted",
+            "nameLocation": "199:17:0",
+            "nodeType": "VariableDeclaration",
+            "scope": 66,
+            "src": "187:37:0",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 9,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "187:4:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": {
+              "hexValue": "66616c7365",
+              "id": 10,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "bool",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "219:5:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              },
+              "value": "false"
+            },
             "visibility": "public"
           },
           {
             "constant": false,
             "functionSelector": "afcf2fc4",
-            "id": 9,
+            "id": 13,
             "mutability": "mutable",
             "name": "charityAddress",
-            "nameLocation": "207:14:0",
+            "nameLocation": "254:14:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
-            "src": "184:37:0",
+            "scope": 66,
+            "src": "231:37:0",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -219,10 +292,10 @@
               "typeString": "address payable"
             },
             "typeName": {
-              "id": 8,
+              "id": 12,
               "name": "address",
               "nodeType": "ElementaryTypeName",
-              "src": "184:15:0",
+              "src": "231:15:0",
               "stateMutability": "payable",
               "typeDescriptions": {
                 "typeIdentifier": "t_address_payable",
@@ -235,51 +308,8 @@
             "body": {
               "id": 31,
               "nodeType": "Block",
-              "src": "296:119:0",
+              "src": "343:93:0",
               "statements": [
-                {
-                  "expression": {
-                    "id": 18,
-                    "isConstant": false,
-                    "isLValue": false,
-                    "isPure": false,
-                    "lValueRequested": false,
-                    "leftHandSide": {
-                      "id": 16,
-                      "name": "message",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 3,
-                      "src": "306:7:0",
-                      "typeDescriptions": {
-                        "typeIdentifier": "t_string_storage",
-                        "typeString": "string storage ref"
-                      }
-                    },
-                    "nodeType": "Assignment",
-                    "operator": "=",
-                    "rightHandSide": {
-                      "id": 17,
-                      "name": "_initialMessage",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 11,
-                      "src": "316:15:0",
-                      "typeDescriptions": {
-                        "typeIdentifier": "t_string_memory_ptr",
-                        "typeString": "string memory"
-                      }
-                    },
-                    "src": "306:25:0",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_string_storage",
-                      "typeString": "string storage ref"
-                    }
-                  },
-                  "id": 19,
-                  "nodeType": "ExpressionStatement",
-                  "src": "306:25:0"
-                },
                 {
                   "expression": {
                     "id": 22,
@@ -289,43 +319,39 @@
                     "lValueRequested": false,
                     "leftHandSide": {
                       "id": 20,
-                      "name": "lastDonation",
+                      "name": "message",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 7,
-                      "src": "341:12:0",
+                      "referencedDeclaration": 3,
+                      "src": "353:7:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_uint256",
-                        "typeString": "uint256"
+                        "typeIdentifier": "t_string_storage",
+                        "typeString": "string storage ref"
                       }
                     },
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
-                      "hexValue": "30",
                       "id": 21,
-                      "isConstant": false,
-                      "isLValue": false,
-                      "isPure": true,
-                      "kind": "number",
-                      "lValueRequested": false,
-                      "nodeType": "Literal",
-                      "src": "356:1:0",
+                      "name": "_initialMessage",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 15,
+                      "src": "363:15:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_rational_0_by_1",
-                        "typeString": "int_const 0"
-                      },
-                      "value": "0"
+                        "typeIdentifier": "t_string_memory_ptr",
+                        "typeString": "string memory"
+                      }
                     },
-                    "src": "341:16:0",
+                    "src": "353:25:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_uint256",
-                      "typeString": "uint256"
+                      "typeIdentifier": "t_string_storage",
+                      "typeString": "string storage ref"
                     }
                   },
                   "id": 23,
                   "nodeType": "ExpressionStatement",
-                  "src": "341:16:0"
+                  "src": "353:25:0"
                 },
                 {
                   "expression": {
@@ -339,8 +365,8 @@
                       "name": "charityAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9,
-                      "src": "367:14:0",
+                      "referencedDeclaration": 13,
+                      "src": "388:14:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
@@ -355,8 +381,8 @@
                           "name": "_charityAddress",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 13,
-                          "src": "392:15:0",
+                          "referencedDeclaration": 17,
+                          "src": "413:15:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -376,7 +402,7 @@
                         "isPure": true,
                         "lValueRequested": false,
                         "nodeType": "ElementaryTypeNameExpression",
-                        "src": "384:8:0",
+                        "src": "405:8:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_type$_t_address_payable_$",
                           "typeString": "type(address payable)"
@@ -385,7 +411,7 @@
                           "id": 25,
                           "name": "address",
                           "nodeType": "ElementaryTypeName",
-                          "src": "384:8:0",
+                          "src": "405:8:0",
                           "stateMutability": "payable",
                           "typeDescriptions": {}
                         }
@@ -398,14 +424,14 @@
                       "lValueRequested": false,
                       "names": [],
                       "nodeType": "FunctionCall",
-                      "src": "384:24:0",
+                      "src": "405:24:0",
                       "tryCall": false,
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
                       }
                     },
-                    "src": "367:41:0",
+                    "src": "388:41:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address_payable",
                       "typeString": "address payable"
@@ -413,7 +439,7 @@
                   },
                   "id": 30,
                   "nodeType": "ExpressionStatement",
-                  "src": "367:41:0"
+                  "src": "388:41:0"
                 }
               ]
             },
@@ -425,18 +451,18 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 14,
+              "id": 18,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 11,
+                  "id": 15,
                   "mutability": "mutable",
                   "name": "_initialMessage",
-                  "nameLocation": "254:15:0",
+                  "nameLocation": "301:15:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 32,
-                  "src": "240:29:0",
+                  "src": "287:29:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -444,10 +470,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 10,
+                    "id": 14,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "240:6:0",
+                    "src": "287:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -457,13 +483,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 13,
+                  "id": 17,
                   "mutability": "mutable",
                   "name": "_charityAddress",
-                  "nameLocation": "279:15:0",
+                  "nameLocation": "326:15:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 32,
-                  "src": "271:23:0",
+                  "src": "318:23:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -471,10 +497,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 12,
+                    "id": 16,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "271:7:0",
+                    "src": "318:7:0",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -484,16 +510,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "239:56:0"
+              "src": "286:56:0"
             },
             "returnParameters": {
-              "id": 15,
+              "id": 19,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "296:0:0"
+              "src": "343:0:0"
             },
-            "scope": 57,
-            "src": "228:187:0",
+            "scope": 66,
+            "src": "275:161:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "internal"
@@ -502,7 +528,7 @@
             "body": {
               "id": 48,
               "nodeType": "Block",
-              "src": "494:81:0",
+              "src": "515:81:0",
               "statements": [
                 {
                   "expression": {
@@ -524,7 +550,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 4294967281,
-                            "src": "512:3:0",
+                            "src": "533:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
@@ -537,7 +563,7 @@
                           "lValueRequested": false,
                           "memberName": "value",
                           "nodeType": "MemberAccess",
-                          "src": "512:9:0",
+                          "src": "533:9:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -550,14 +576,14 @@
                           "name": "lastDonation",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 7,
-                          "src": "524:12:0",
+                          "referencedDeclaration": 8,
+                          "src": "545:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
                           }
                         },
-                        "src": "512:24:0",
+                        "src": "533:24:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
@@ -579,7 +605,7 @@
                         4294967278
                       ],
                       "referencedDeclaration": 4294967278,
-                      "src": "504:7:0",
+                      "src": "525:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                         "typeString": "function (bool) pure"
@@ -593,7 +619,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "504:33:0",
+                    "src": "525:33:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
@@ -602,7 +628,7 @@
                   },
                   "id": 43,
                   "nodeType": "ExpressionStatement",
-                  "src": "504:33:0"
+                  "src": "525:33:0"
                 },
                 {
                   "expression": {
@@ -617,7 +643,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 3,
-                      "src": "547:7:0",
+                      "src": "568:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_string_storage",
                         "typeString": "string storage ref"
@@ -631,13 +657,13 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 34,
-                      "src": "557:11:0",
+                      "src": "578:11:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_string_memory_ptr",
                         "typeString": "string memory"
                       }
                     },
-                    "src": "547:21:0",
+                    "src": "568:21:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage",
                       "typeString": "string storage ref"
@@ -645,7 +671,7 @@
                   },
                   "id": 47,
                   "nodeType": "ExpressionStatement",
-                  "src": "547:21:0"
+                  "src": "568:21:0"
                 }
               ]
             },
@@ -655,7 +681,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "changeMessage",
-            "nameLocation": "430:13:0",
+            "nameLocation": "451:13:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 35,
@@ -666,10 +692,10 @@
                   "id": 34,
                   "mutability": "mutable",
                   "name": "_newMessage",
-                  "nameLocation": "458:11:0",
+                  "nameLocation": "479:11:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 49,
-                  "src": "444:25:0",
+                  "src": "465:25:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -680,7 +706,7 @@
                     "id": 33,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "444:6:0",
+                    "src": "465:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -689,16 +715,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "443:27:0"
+              "src": "464:27:0"
             },
             "returnParameters": {
               "id": 36,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "494:0:0"
+              "src": "515:0:0"
             },
-            "scope": 57,
-            "src": "421:154:0",
+            "scope": 66,
+            "src": "442:154:0",
             "stateMutability": "payable",
             "virtual": true,
             "visibility": "public"
@@ -709,34 +735,132 @@
             "kind": "function",
             "modifiers": [],
             "name": "withdrawalBalanceToCharity",
-            "nameLocation": "640:26:0",
+            "nameLocation": "661:26:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 50,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "666:2:0"
+              "src": "687:2:0"
             },
             "returnParameters": {
               "id": 51,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "685:0:0"
+              "src": "706:0:0"
             },
-            "scope": 57,
-            "src": "631:55:0",
+            "scope": 66,
+            "src": "652:55:0",
             "stateMutability": "nonpayable",
             "virtual": true,
             "visibility": "internal"
           },
           {
             "body": {
-              "id": 55,
+              "id": 60,
               "nodeType": "Block",
-              "src": "719:2:0",
+              "src": "747:55:0",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "id": 56,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "UnaryOperation",
+                        "operator": "!",
+                        "prefix": true,
+                        "src": "765:18:0",
+                        "subExpression": {
+                          "id": 55,
+                          "name": "campaignCompleted",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11,
+                          "src": "766:17:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "id": 54,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        4294967278,
+                        4294967278
+                      ],
+                      "referencedDeclaration": 4294967278,
+                      "src": "757:7:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+                        "typeString": "function (bool) pure"
+                      }
+                    },
+                    "id": 57,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "757:27:0",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 58,
+                  "nodeType": "ExpressionStatement",
+                  "src": "757:27:0"
+                },
+                {
+                  "id": 59,
+                  "nodeType": "PlaceholderStatement",
+                  "src": "794:1:0"
+                }
+              ]
+            },
+            "id": 61,
+            "name": "requiresActiveCampaign",
+            "nameLocation": "722:22:0",
+            "nodeType": "ModifierDefinition",
+            "parameters": {
+              "id": 53,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "744:2:0"
+            },
+            "src": "713:89:0",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 64,
+              "nodeType": "Block",
+              "src": "835:2:0",
               "statements": []
             },
-            "id": 56,
+            "id": 65,
             "implemented": true,
             "kind": "receive",
             "modifiers": [],
@@ -744,39 +868,39 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 53,
+              "id": 62,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "699:2:0"
+              "src": "815:2:0"
             },
             "returnParameters": {
-              "id": 54,
+              "id": 63,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "719:0:0"
+              "src": "835:0:0"
             },
-            "scope": 57,
-            "src": "692:29:0",
+            "scope": 66,
+            "src": "808:29:0",
             "stateMutability": "payable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 58,
-        "src": "57:666:0",
+        "scope": 67,
+        "src": "57:782:0",
         "usedErrors": []
       }
     ],
-    "src": "32:692:0"
+    "src": "32:808:0"
   },
   "legacyAST": {
     "absolutePath": "/Users/ryan/charity-auction/contracts/CharityAuction.sol",
     "exportedSymbols": {
       "CharityAuction": [
-        57
+        66
       ]
     },
-    "id": 58,
+    "id": 67,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
@@ -797,9 +921,9 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": false,
-        "id": 57,
+        "id": 66,
         "linearizedBaseContracts": [
-          57
+          66
         ],
         "name": "CharityAuction",
         "nameLocation": "75:14:0",
@@ -813,7 +937,7 @@
             "name": "message",
             "nameLocation": "110:7:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
+            "scope": 66,
             "src": "96:21:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -841,7 +965,7 @@
             "name": "lastDonor",
             "nameLocation": "138:9:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
+            "scope": 66,
             "src": "123:24:0",
             "stateVariable": true,
             "storageLocation": "default",
@@ -865,13 +989,13 @@
           {
             "constant": false,
             "functionSelector": "661a5611",
-            "id": 7,
+            "id": 8,
             "mutability": "mutable",
             "name": "lastDonation",
             "nameLocation": "165:12:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
-            "src": "153:24:0",
+            "scope": 66,
+            "src": "153:28:0",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -888,18 +1012,78 @@
                 "typeString": "uint256"
               }
             },
+            "value": {
+              "hexValue": "30",
+              "id": 7,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "180:1:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_0_by_1",
+                "typeString": "int_const 0"
+              },
+              "value": "0"
+            },
+            "visibility": "public"
+          },
+          {
+            "constant": false,
+            "functionSelector": "0899077e",
+            "id": 11,
+            "mutability": "mutable",
+            "name": "campaignCompleted",
+            "nameLocation": "199:17:0",
+            "nodeType": "VariableDeclaration",
+            "scope": 66,
+            "src": "187:37:0",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 9,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "187:4:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": {
+              "hexValue": "66616c7365",
+              "id": 10,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "bool",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "219:5:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              },
+              "value": "false"
+            },
             "visibility": "public"
           },
           {
             "constant": false,
             "functionSelector": "afcf2fc4",
-            "id": 9,
+            "id": 13,
             "mutability": "mutable",
             "name": "charityAddress",
-            "nameLocation": "207:14:0",
+            "nameLocation": "254:14:0",
             "nodeType": "VariableDeclaration",
-            "scope": 57,
-            "src": "184:37:0",
+            "scope": 66,
+            "src": "231:37:0",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -907,10 +1091,10 @@
               "typeString": "address payable"
             },
             "typeName": {
-              "id": 8,
+              "id": 12,
               "name": "address",
               "nodeType": "ElementaryTypeName",
-              "src": "184:15:0",
+              "src": "231:15:0",
               "stateMutability": "payable",
               "typeDescriptions": {
                 "typeIdentifier": "t_address_payable",
@@ -923,51 +1107,8 @@
             "body": {
               "id": 31,
               "nodeType": "Block",
-              "src": "296:119:0",
+              "src": "343:93:0",
               "statements": [
-                {
-                  "expression": {
-                    "id": 18,
-                    "isConstant": false,
-                    "isLValue": false,
-                    "isPure": false,
-                    "lValueRequested": false,
-                    "leftHandSide": {
-                      "id": 16,
-                      "name": "message",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 3,
-                      "src": "306:7:0",
-                      "typeDescriptions": {
-                        "typeIdentifier": "t_string_storage",
-                        "typeString": "string storage ref"
-                      }
-                    },
-                    "nodeType": "Assignment",
-                    "operator": "=",
-                    "rightHandSide": {
-                      "id": 17,
-                      "name": "_initialMessage",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 11,
-                      "src": "316:15:0",
-                      "typeDescriptions": {
-                        "typeIdentifier": "t_string_memory_ptr",
-                        "typeString": "string memory"
-                      }
-                    },
-                    "src": "306:25:0",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_string_storage",
-                      "typeString": "string storage ref"
-                    }
-                  },
-                  "id": 19,
-                  "nodeType": "ExpressionStatement",
-                  "src": "306:25:0"
-                },
                 {
                   "expression": {
                     "id": 22,
@@ -977,43 +1118,39 @@
                     "lValueRequested": false,
                     "leftHandSide": {
                       "id": 20,
-                      "name": "lastDonation",
+                      "name": "message",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 7,
-                      "src": "341:12:0",
+                      "referencedDeclaration": 3,
+                      "src": "353:7:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_uint256",
-                        "typeString": "uint256"
+                        "typeIdentifier": "t_string_storage",
+                        "typeString": "string storage ref"
                       }
                     },
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
-                      "hexValue": "30",
                       "id": 21,
-                      "isConstant": false,
-                      "isLValue": false,
-                      "isPure": true,
-                      "kind": "number",
-                      "lValueRequested": false,
-                      "nodeType": "Literal",
-                      "src": "356:1:0",
+                      "name": "_initialMessage",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 15,
+                      "src": "363:15:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_rational_0_by_1",
-                        "typeString": "int_const 0"
-                      },
-                      "value": "0"
+                        "typeIdentifier": "t_string_memory_ptr",
+                        "typeString": "string memory"
+                      }
                     },
-                    "src": "341:16:0",
+                    "src": "353:25:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_uint256",
-                      "typeString": "uint256"
+                      "typeIdentifier": "t_string_storage",
+                      "typeString": "string storage ref"
                     }
                   },
                   "id": 23,
                   "nodeType": "ExpressionStatement",
-                  "src": "341:16:0"
+                  "src": "353:25:0"
                 },
                 {
                   "expression": {
@@ -1027,8 +1164,8 @@
                       "name": "charityAddress",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9,
-                      "src": "367:14:0",
+                      "referencedDeclaration": 13,
+                      "src": "388:14:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
@@ -1043,8 +1180,8 @@
                           "name": "_charityAddress",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 13,
-                          "src": "392:15:0",
+                          "referencedDeclaration": 17,
+                          "src": "413:15:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_address",
                             "typeString": "address"
@@ -1064,7 +1201,7 @@
                         "isPure": true,
                         "lValueRequested": false,
                         "nodeType": "ElementaryTypeNameExpression",
-                        "src": "384:8:0",
+                        "src": "405:8:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_type$_t_address_payable_$",
                           "typeString": "type(address payable)"
@@ -1073,7 +1210,7 @@
                           "id": 25,
                           "name": "address",
                           "nodeType": "ElementaryTypeName",
-                          "src": "384:8:0",
+                          "src": "405:8:0",
                           "stateMutability": "payable",
                           "typeDescriptions": {}
                         }
@@ -1086,14 +1223,14 @@
                       "lValueRequested": false,
                       "names": [],
                       "nodeType": "FunctionCall",
-                      "src": "384:24:0",
+                      "src": "405:24:0",
                       "tryCall": false,
                       "typeDescriptions": {
                         "typeIdentifier": "t_address_payable",
                         "typeString": "address payable"
                       }
                     },
-                    "src": "367:41:0",
+                    "src": "388:41:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address_payable",
                       "typeString": "address payable"
@@ -1101,7 +1238,7 @@
                   },
                   "id": 30,
                   "nodeType": "ExpressionStatement",
-                  "src": "367:41:0"
+                  "src": "388:41:0"
                 }
               ]
             },
@@ -1113,18 +1250,18 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 14,
+              "id": 18,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 11,
+                  "id": 15,
                   "mutability": "mutable",
                   "name": "_initialMessage",
-                  "nameLocation": "254:15:0",
+                  "nameLocation": "301:15:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 32,
-                  "src": "240:29:0",
+                  "src": "287:29:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1132,10 +1269,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 10,
+                    "id": 14,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "240:6:0",
+                    "src": "287:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1145,13 +1282,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 13,
+                  "id": 17,
                   "mutability": "mutable",
                   "name": "_charityAddress",
-                  "nameLocation": "279:15:0",
+                  "nameLocation": "326:15:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 32,
-                  "src": "271:23:0",
+                  "src": "318:23:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1159,10 +1296,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 12,
+                    "id": 16,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "271:7:0",
+                    "src": "318:7:0",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1172,16 +1309,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "239:56:0"
+              "src": "286:56:0"
             },
             "returnParameters": {
-              "id": 15,
+              "id": 19,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "296:0:0"
+              "src": "343:0:0"
             },
-            "scope": 57,
-            "src": "228:187:0",
+            "scope": 66,
+            "src": "275:161:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "internal"
@@ -1190,7 +1327,7 @@
             "body": {
               "id": 48,
               "nodeType": "Block",
-              "src": "494:81:0",
+              "src": "515:81:0",
               "statements": [
                 {
                   "expression": {
@@ -1212,7 +1349,7 @@
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
                             "referencedDeclaration": 4294967281,
-                            "src": "512:3:0",
+                            "src": "533:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
                               "typeString": "msg"
@@ -1225,7 +1362,7 @@
                           "lValueRequested": false,
                           "memberName": "value",
                           "nodeType": "MemberAccess",
-                          "src": "512:9:0",
+                          "src": "533:9:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -1238,14 +1375,14 @@
                           "name": "lastDonation",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 7,
-                          "src": "524:12:0",
+                          "referencedDeclaration": 8,
+                          "src": "545:12:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
                           }
                         },
-                        "src": "512:24:0",
+                        "src": "533:24:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
@@ -1267,7 +1404,7 @@
                         4294967278
                       ],
                       "referencedDeclaration": 4294967278,
-                      "src": "504:7:0",
+                      "src": "525:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
                         "typeString": "function (bool) pure"
@@ -1281,7 +1418,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "504:33:0",
+                    "src": "525:33:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
@@ -1290,7 +1427,7 @@
                   },
                   "id": 43,
                   "nodeType": "ExpressionStatement",
-                  "src": "504:33:0"
+                  "src": "525:33:0"
                 },
                 {
                   "expression": {
@@ -1305,7 +1442,7 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 3,
-                      "src": "547:7:0",
+                      "src": "568:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_string_storage",
                         "typeString": "string storage ref"
@@ -1319,13 +1456,13 @@
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
                       "referencedDeclaration": 34,
-                      "src": "557:11:0",
+                      "src": "578:11:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_string_memory_ptr",
                         "typeString": "string memory"
                       }
                     },
-                    "src": "547:21:0",
+                    "src": "568:21:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage",
                       "typeString": "string storage ref"
@@ -1333,7 +1470,7 @@
                   },
                   "id": 47,
                   "nodeType": "ExpressionStatement",
-                  "src": "547:21:0"
+                  "src": "568:21:0"
                 }
               ]
             },
@@ -1343,7 +1480,7 @@
             "kind": "function",
             "modifiers": [],
             "name": "changeMessage",
-            "nameLocation": "430:13:0",
+            "nameLocation": "451:13:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 35,
@@ -1354,10 +1491,10 @@
                   "id": 34,
                   "mutability": "mutable",
                   "name": "_newMessage",
-                  "nameLocation": "458:11:0",
+                  "nameLocation": "479:11:0",
                   "nodeType": "VariableDeclaration",
                   "scope": 49,
-                  "src": "444:25:0",
+                  "src": "465:25:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1368,7 +1505,7 @@
                     "id": 33,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "444:6:0",
+                    "src": "465:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1377,16 +1514,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "443:27:0"
+              "src": "464:27:0"
             },
             "returnParameters": {
               "id": 36,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "494:0:0"
+              "src": "515:0:0"
             },
-            "scope": 57,
-            "src": "421:154:0",
+            "scope": 66,
+            "src": "442:154:0",
             "stateMutability": "payable",
             "virtual": true,
             "visibility": "public"
@@ -1397,34 +1534,132 @@
             "kind": "function",
             "modifiers": [],
             "name": "withdrawalBalanceToCharity",
-            "nameLocation": "640:26:0",
+            "nameLocation": "661:26:0",
             "nodeType": "FunctionDefinition",
             "parameters": {
               "id": 50,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "666:2:0"
+              "src": "687:2:0"
             },
             "returnParameters": {
               "id": 51,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "685:0:0"
+              "src": "706:0:0"
             },
-            "scope": 57,
-            "src": "631:55:0",
+            "scope": 66,
+            "src": "652:55:0",
             "stateMutability": "nonpayable",
             "virtual": true,
             "visibility": "internal"
           },
           {
             "body": {
-              "id": 55,
+              "id": 60,
               "nodeType": "Block",
-              "src": "719:2:0",
+              "src": "747:55:0",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "id": 56,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "UnaryOperation",
+                        "operator": "!",
+                        "prefix": true,
+                        "src": "765:18:0",
+                        "subExpression": {
+                          "id": 55,
+                          "name": "campaignCompleted",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11,
+                          "src": "766:17:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "id": 54,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        4294967278,
+                        4294967278
+                      ],
+                      "referencedDeclaration": 4294967278,
+                      "src": "757:7:0",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
+                        "typeString": "function (bool) pure"
+                      }
+                    },
+                    "id": 57,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "757:27:0",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 58,
+                  "nodeType": "ExpressionStatement",
+                  "src": "757:27:0"
+                },
+                {
+                  "id": 59,
+                  "nodeType": "PlaceholderStatement",
+                  "src": "794:1:0"
+                }
+              ]
+            },
+            "id": 61,
+            "name": "requiresActiveCampaign",
+            "nameLocation": "722:22:0",
+            "nodeType": "ModifierDefinition",
+            "parameters": {
+              "id": 53,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "744:2:0"
+            },
+            "src": "713:89:0",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 64,
+              "nodeType": "Block",
+              "src": "835:2:0",
               "statements": []
             },
-            "id": 56,
+            "id": 65,
             "implemented": true,
             "kind": "receive",
             "modifiers": [],
@@ -1432,38 +1667,38 @@
             "nameLocation": "-1:-1:-1",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 53,
+              "id": 62,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "699:2:0"
+              "src": "815:2:0"
             },
             "returnParameters": {
-              "id": 54,
+              "id": 63,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "719:0:0"
+              "src": "835:0:0"
             },
-            "scope": 57,
-            "src": "692:29:0",
+            "scope": 66,
+            "src": "808:29:0",
             "stateMutability": "payable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 58,
-        "src": "57:666:0",
+        "scope": 67,
+        "src": "57:782:0",
         "usedErrors": []
       }
     ],
-    "src": "32:692:0"
+    "src": "32:808:0"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.8.4+commit.c7e474f2.Emscripten.clang"
+    "version": "0.8.5+commit.a4f2e591.Emscripten.clang"
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-06-08T18:16:18.961Z",
+  "updatedAt": "2021-06-11T08:40:29.873Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

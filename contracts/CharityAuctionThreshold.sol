@@ -13,11 +13,14 @@ contract CharityAuctionThreshold is CharityAuction {
     }
 
     function remainingWei() public view returns (uint) {
-        return threshold - address(this).balance;
+        if(campaignCompleted) {
+            return 0;
+        } else {
+            return threshold - address(this).balance;
+        }
     }
 
-    // Should lastDonation reset when the balance is reset?
-    function changeMessage(string memory _newMessage) override public payable {
+    function changeMessage(string memory _newMessage) override public payable requiresActiveCampaign {
         require(msg.value > lastDonation);
         message = _newMessage;
         lastDonor = msg.sender;
@@ -29,5 +32,6 @@ contract CharityAuctionThreshold is CharityAuction {
 
     function withdrawalBalanceToCharity() internal override {
         charityAddress.transfer(address(this).balance);
+        campaignCompleted = true;
     }
 }

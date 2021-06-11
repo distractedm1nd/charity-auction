@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 abstract contract CharityAuction {
     string public message;
     address public lastDonor;
-    uint public lastDonation;
+    uint public lastDonation = 0;
+    bool public campaignCompleted = false;
 
     address payable public charityAddress;
 
     constructor(string memory _initialMessage, address _charityAddress) {
         message = _initialMessage;
-        lastDonation = 0;
         charityAddress = payable(_charityAddress);
     }
 
@@ -21,6 +21,11 @@ abstract contract CharityAuction {
 
     // How will this get called from oracle? 🤔
     function withdrawalBalanceToCharity() internal virtual;
+
+    modifier requiresActiveCampaign() {
+        require(!campaignCompleted);
+        _;
+    }
 
     receive() external payable {}
 }
