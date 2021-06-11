@@ -1,7 +1,10 @@
 import React, {Fragment, useEffect, useState} from "react";
-import {Box, Button, Card, Flex, Heading, Input, Modal, Progress} from 'rimble-ui';
+import {Box, Button, Card, Flex, Heading, Input, Modal, Progress, Field, Form} from 'rimble-ui';
 import {CalendarIcon, CheckIcon, ChevronDownIcon, CurrencyDollarIcon, LinkIcon, PencilIcon, InformationCircleIcon, InboxInIcon, FingerPrintIcon} from '@heroicons/react/solid'
 import {Menu, Transition} from '@headlessui/react'
+import Web3 from "web3";
+import Tooltip from "rimble-ui/dist/es/Tooltip";
+import Text from "rimble-ui/dist/es/Text";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -10,6 +13,7 @@ function classNames(...classes) {
 export default ({drizzle, drizzleState}) => {
     // destructure drizzle and drizzleState from props
     let {lastDonor, lastDonation, message, changeMessage, threshold, remainingWei, charityAddress} = drizzle.contracts.CharityAuctionThreshold.methods;
+    let {toBN, toWei, fromWei} = Web3.utils;
     let contract = drizzleState.contracts.CharityAuctionThreshold
 
     const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +31,12 @@ export default ({drizzle, drizzleState}) => {
     let progress = (thresholdValue - remainingWeiValue) / thresholdValue
 
     const donate = () => {
-        changeMessage.cacheSend(newMessage, {value: newDonation});
+        if(canChangeMessage()) {
+            changeMessage.cacheSend(newMessage, {value: toWei(newDonation, "ether")});
+        } else {
+            //This is a hack, need to find the correct way to do this
+           drizzle.contracts.CharityAuctionThreshold.web3.eth.sendTransaction({from: drizzleState.accounts[0], value: toWei(newDonation, "ether"), to: drizzle.contracts.CharityAuctionThreshold.options.address})
+        }
         updateView();
     }
 
@@ -55,6 +64,20 @@ export default ({drizzle, drizzleState}) => {
     useEffect(() => {
         updateView();
     }, [])
+
+
+    const validEtherValue = (inputValue) => {
+        try {
+            toWei(inputValue, "ether")
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    const canChangeMessage = () => {
+        return validEtherValue(newDonation) && toBN(toWei(newDonation, 'ether')).gt(toBN(lastDonationValue));
+    }
 
     return (
         <div className="min-h-screen flex">
@@ -174,12 +197,21 @@ export default ({drizzle, drizzleState}) => {
                             onClick={closeModal}
                         />
 
-                        <Box p={4} mb={3}>
+                        <Box p={4}>
                             <Heading.h3>Donate</Heading.h3>
-                            <Input required={true} placeholder="100" value={newDonation}
-                                   onChange={(e) => setNewDonation(e.target.value)}/>
-                            <Input required={true} placeholder="New Message" value={newMessage}
-                                   onChange={(e) => setNewMessage(e.target.value)}/>
+                            <Form validated={() => validEtherValue(newDonation)}>
+                                <Field label={"Donation Amount (ETH)"} validated={validEtherValue(newDonation)}>
+                                    <Form.Input required placeholder={lastDonationValue ? fromWei(toBN(lastDonationValue), 'ether') : ""} value={newDonation}
+                                                onChange={(e) => setNewDonation(e.target.value)}/>
+                                </Field>
+                                <Tooltip message={"To be able to set the message, you must donate more than the last donor."} placement="right">
+                                    <Field label={"Your Message"} validated={false}>
+                                        <Form.Input required placeholder="New Message" disabled={!canChangeMessage()} value={newMessage}
+                                                    onChange={(e) => setNewMessage(e.target.value)}/>
+                                    </Field>
+                                </Tooltip>
+                            </Form>
+                            <Button.Outline onClick={() => setNewDonation(fromWei(toBN(lastDonationValue), 'ether'))}>Set Donation to Last Donor's Amount</Button.Outline>
                         </Box>
 
                         <Flex
