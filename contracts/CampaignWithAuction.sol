@@ -1,15 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-abstract contract CharityAuction {
+abstract contract CampaignWithAuction  {
+    string public title;
+    string public description;
+    address payable immutable public charityAddress;
+
     string public message;
     address public lastDonor;
     uint public lastDonation = 0;
     bool public campaignCompleted = false;
 
-    address payable public charityAddress;
 
-    constructor(string memory _initialMessage, address _charityAddress) {
+    constructor(string memory _title, string memory _description, string memory _initialMessage, address _charityAddress) {
+        title = _title;
+        description = _description;
         message = _initialMessage;
         charityAddress = payable(_charityAddress);
     }

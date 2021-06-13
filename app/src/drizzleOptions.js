@@ -1,11 +1,11 @@
 import Web3 from "web3";
-import CharityAuctionThreshold from "./contracts/CharityAuctionThreshold.json";
+import ThresholdRelease from "./contracts/ThresholdRelease.json";
 
 const options = {
   web3: {
     block: false,
   },
-  contracts: [CharityAuctionThreshold],
+  contracts: [ThresholdRelease],
 };
 
 export default options;

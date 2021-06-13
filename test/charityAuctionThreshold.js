@@ -1,13 +1,13 @@
-const CharityAuctionThreshold = artifacts.require("CharityAuctionThreshold");
+const ThresholdRelease = artifacts.require("ThresholdRelease");
 const truffleAssert = require("truffle-assertions");
 
 let instance;
 
 before(async function () {
-  instance = await CharityAuctionThreshold.deployed();
+  instance = await ThresholdRelease.deployed();
 })
 
-contract("CharityAuctionThreshold", accounts => {
+contract("ThresholdRelease", accounts => {
 
   it("...should store message on first donation.", async () => {
     await instance.changeMessage("New Message", { from: accounts[1], value: 10 });

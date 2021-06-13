@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./CharityAuctionTimeout.sol";
-import "./CharityAuction.sol";
+import "./TimeoutRelease.sol";
+import "./CampaignWithAuction.sol";
 
-contract CharityAuctionTimeout is CharityAuction {
-    uint timeout;
+contract TimeoutRelease is CampaignWithAuction {
+    uint public timeout;
 
-    constructor(string memory _initialMessage, address _charityAddress, uint _timeInDays) CharityAuction(_initialMessage, _charityAddress) {
+    constructor(string memory _title, string memory _description, string memory _initialMessage, address _charityAddress, uint _timeInDays)
+        CampaignWithAuction( _title, _description, _initialMessage, _charityAddress)
+    {
         timeout = block.timestamp + (_timeInDays * 1 days);
     }
 

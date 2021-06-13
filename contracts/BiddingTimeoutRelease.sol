@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./CharityAuctionTimeout.sol";
+import "./TimeoutRelease.sol";
 
-contract CharityAuctionTimeoutBidding is CharityAuctionTimeout {
-    uint incrementalTimeout;
+contract BiddingTimeoutRelease is TimeoutRelease {
+    uint immutable public incrementalTimeout;
 
-    constructor(string memory _initialMessage, address _charityAddress, uint _timeInDays)
-    CharityAuctionTimeout(_initialMessage, _charityAddress, _timeInDays)
+    constructor(string memory _title, string memory _description, string memory _initialMessage, address _charityAddress, uint _timeInDays)
+        TimeoutRelease( _title, _description, _initialMessage, _charityAddress, _timeInDays)
     {
         incrementalTimeout = _timeInDays * 1 days;
     }

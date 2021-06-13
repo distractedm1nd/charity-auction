@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./CharityAuction.sol";
+import "./CampaignWithAuction.sol";
 
-contract CharityAuctionThreshold is CharityAuction {
-    uint public threshold;
+contract ThresholdRelease is CampaignWithAuction {
+    uint immutable public threshold;
 
-    constructor( string memory _initialMessage, address _charityAddress, uint _threshold)
-        CharityAuction( _initialMessage, _charityAddress )
+    constructor(string memory _title, string memory _description, string memory _initialMessage, address _charityAddress, uint _threshold)
+        CampaignWithAuction( _title, _description, _initialMessage, _charityAddress )
     {
         threshold = _threshold;
     }

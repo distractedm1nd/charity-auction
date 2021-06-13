@@ -1,10 +1,8 @@
 import React, {Fragment, useEffect, useState} from "react";
-import {Box, Button, Card, Flex, Heading, Input, Modal, Progress, Field, Form} from 'rimble-ui';
-import {CalendarIcon, CheckIcon, ChevronDownIcon, CurrencyDollarIcon, LinkIcon, PencilIcon, InformationCircleIcon, InboxInIcon, FingerPrintIcon} from '@heroicons/react/solid'
+import {Box, Button, Card, Flex, Heading, Tooltip, Modal, Progress, Field, Form} from 'rimble-ui';
+import {CheckIcon, ChevronDownIcon, CurrencyDollarIcon, LinkIcon, PencilIcon, InformationCircleIcon, InboxInIcon, FingerPrintIcon} from '@heroicons/react/solid'
 import {Menu, Transition} from '@headlessui/react'
 import Web3 from "web3";
-import Tooltip from "rimble-ui/dist/es/Tooltip";
-import Text from "rimble-ui/dist/es/Text";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -12,17 +10,20 @@ function classNames(...classes) {
 
 export default ({drizzle, drizzleState}) => {
     // destructure drizzle and drizzleState from props
-    let {lastDonor, lastDonation, message, changeMessage, threshold, remainingWei, charityAddress} = drizzle.contracts.CharityAuctionThreshold.methods;
+    let {lastDonor, lastDonation, message, changeMessage, threshold, remainingWei, charityAddress, title, description} = drizzle.contracts.ThresholdRelease.methods;
     let {toBN, toWei, fromWei} = Web3.utils;
-    let contract = drizzleState.contracts.CharityAuctionThreshold
+    let contract = drizzleState.contracts.ThresholdRelease
 
     const [isOpen, setIsOpen] = useState(false);
     let [keyStore, setKeyStore] = useState({});
     let [newMessage, setNewMessage] = useState("");
     let [newDonation, setNewDonation] = useState("");
 
+    let titleValue = contract.title[keyStore?.titleDataKey]?.value;
+    let descriptionValue = contract.description[keyStore?.descriptionDataKey]?.value;
     let thresholdValue = contract.threshold[keyStore?.thresholdDataKey]?.value;
     let charityAddressValue = contract.charityAddress[keyStore?.charityAddressDataKey]?.value;
+
     let remainingWeiValue = contract.remainingWei[keyStore?.remainingWeiDataKey]?.value;
     let lastDonorValue = contract.lastDonor[keyStore?.donorDataKey]?.value;
     let lastDonationValue = contract.lastDonation[keyStore?.donationDataKey]?.value;
@@ -35,19 +36,22 @@ export default ({drizzle, drizzleState}) => {
             changeMessage.cacheSend(newMessage, {value: toWei(newDonation, "ether")});
         } else {
             //This is a hack, need to find the correct way to do this
-           drizzle.contracts.CharityAuctionThreshold.web3.eth.sendTransaction({from: drizzleState.accounts[0], value: toWei(newDonation, "ether"), to: drizzle.contracts.CharityAuctionThreshold.options.address})
+           drizzle.contracts.ThresholdRelease.web3.eth.sendTransaction({from: drizzleState.accounts[0], value: toWei(newDonation, "ether"), to: drizzle.contracts.ThresholdRelease.options.address})
         }
         updateView();
     }
 
+    // There is surely a better way to do this?
     const updateView = () => {
         setKeyStore({
             donorDataKey: lastDonor.cacheCall(),
             donationDataKey: lastDonation.cacheCall(),
             messageDataKey: message.cacheCall(),
             remainingWeiDataKey: remainingWei.cacheCall(),
-            thresholdDataKey: threshold.cacheCall(),
             charityAddressDataKey: charityAddress.cacheCall(),
+            thresholdDataKey: threshold.cacheCall(),
+            titleDataKey: title.cacheCall(),
+            descriptionDataKey: description.cacheCall(),
         });
     }
 
@@ -85,7 +89,10 @@ export default ({drizzle, drizzleState}) => {
                 <div className="lg:flex lg:items-center lg:justify-between">
                     <div className="flex-1 min-w-0">
                         <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                            Example Charity
+                            {titleValue}
+                        </h2>
+                        <h2 className="text-xl leading-7 text-gray-900 sm:text-xl sm:truncate">
+                            {descriptionValue}
                         </h2>
                         <div className="flex flex-col mt-1 sm:flex-row sm:flex-wrap sm:mt-0 sm:space-x-6">
                             <div className="flex items-center mt-2 text-sm text-gray-500">
