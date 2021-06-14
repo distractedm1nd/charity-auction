@@ -3,3 +3,4 @@ node_modules/
 yarn.lock
 package.lock
 app/src/contracts/
+app/src/main.css

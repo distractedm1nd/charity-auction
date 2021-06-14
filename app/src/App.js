@@ -3,7 +3,7 @@ import { DrizzleContext } from "@drizzle/react-plugin";
 import { Drizzle } from "@drizzle/store";
 import drizzleOptions from "./drizzleOptions";
 import ThresholdReleaseComponent from "./ThresholdReleaseComponent";
-import "./App.css";
+import "./main.css";
 
 const drizzle = new Drizzle(drizzleOptions);
 

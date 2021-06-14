@@ -9,6 +9,9 @@
     "@drizzle/store": "^1.5.3",
     "@headlessui/react": "^1.2.0",
     "@heroicons/react": "^1.0.1",
+    "autoprefixer": "^10.2.6",
+    "postcss": "^8.3.2",
+    "postcss-cli": "^8.3.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-scripts": "3.2.0",
@@ -18,8 +21,8 @@
     "tailwindcss": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "postcss src/App.css -o src/main.css && react-scripts start",
+    "build": "postcss src/App.css -o src/main.css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
