@@ -5,10 +5,15 @@ import drizzleOptions from "./drizzleOptions";
 import ThresholdReleaseComponent from "./ThresholdReleaseComponent";
 import "./main.css";
 import ThresholdRelease from "./contracts/ThresholdRelease.json";
+import {BrowserRouter as Router, Route, Switch, useParams} from "react-router-dom";
 
 const drizzle = new Drizzle(drizzleOptions);
 
-const App = () => {
+const DrizzleThresholdRelease = () => {
+    let {network, contractAddress} = useParams();
+    if(!network) network = '0x4';
+    if(!contractAddress) contractAddress = '0x01C295FD8Cb700112e07b4c854BC27cEEfD6b35b';
+
     return (
         <DrizzleContext.Provider drizzle={drizzle}>
             <DrizzleContext.Consumer>
@@ -38,8 +43,7 @@ const App = () => {
                         )
                     }
                     else {
-                        //TODO: Instead of blocking on wrong chain, allow all chains and have chain, address location be passed as routing params
-                        if (window.ethereum.chainId !== "0x4") {
+                        if (window.ethereum.chainId !== network) {
                             return (
                                 <main className="container loading-screen">
                                     <div className="pure-g">
@@ -60,13 +64,12 @@ const App = () => {
                             );
                         }
 
-                        //TODO: Make contract address dynamic
                         if (!drizzleState.contracts.ThresholdRelease) {
                             drizzle.addContract({
                                     contractName: "ThresholdRelease",
                                     web3Contract: new drizzle.web3.eth.Contract(
                                         ThresholdRelease.abi,
-                                        '0x01C295FD8Cb700112e07b4c854BC27cEEfD6b35b'
+                                        contractAddress
                                     )
                                 }, []
                             );
@@ -100,6 +103,17 @@ const App = () => {
                 }}
             </DrizzleContext.Consumer>
         </DrizzleContext.Provider>
+    )
+}
+
+const App = () => {
+    return (
+        <Router>
+            <Switch>
+                <Route path={"/:network/:contractAddress"} children={<DrizzleThresholdRelease />}/>
+                <Route children={<DrizzleThresholdRelease />}/>
+            </Switch>
+        </Router>
     );
 }
 
