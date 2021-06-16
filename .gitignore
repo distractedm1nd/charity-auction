@@ -2,5 +2,4 @@ node_modules/
 .idea/
 yarn.lock
 package.lock
-app/src/contracts/
 app/src/main.css
