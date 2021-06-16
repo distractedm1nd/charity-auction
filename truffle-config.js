@@ -1,4 +1,7 @@
 const path = require("path");
+require('dotenv').config()
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+const privateKey = process.env.PRIVATE_KEY;
 
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
@@ -10,10 +13,16 @@ module.exports = {
   },
   contracts_build_directory: path.join(__dirname, "app/src/contracts"),
   networks: {
-    develop: { // default with truffle unbox is 7545, but we can use develop to test changes, ex. truffle migrate --network develop
-      host: "127.0.0.1",
-      port: 8545,
-      network_id: "*"
+    rinkeby: {
+      provider: function () {
+        return new HDWalletProvider({
+          privateKeys: [privateKey],
+          providerOrUrl: `https://rinkeby.infura.io/v3/${process.env.INFURA_RINKEBY}`
+      })
+      },
+      gas: 1000000,
+      gasPrice: 1000000000,
+      network_id: 4
     }
   }
 };

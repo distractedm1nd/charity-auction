@@ -1,4 +1,3 @@
-import Web3 from "web3";
 import ThresholdRelease from "./contracts/ThresholdRelease.json";
 
 const options = {
