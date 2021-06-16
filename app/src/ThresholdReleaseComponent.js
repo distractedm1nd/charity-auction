@@ -19,6 +19,7 @@ export default ({drizzle, drizzleState}) => {
     let [newMessage, setNewMessage] = useState("");
     let [newDonation, setNewDonation] = useState("");
 
+    // TODO: Fix this mess, find the correct way to do it
     let titleValue = contract.title[keyStore?.titleDataKey]?.value;
     let descriptionValue = contract.description[keyStore?.descriptionDataKey]?.value;
     let thresholdValue = contract.threshold[keyStore?.thresholdDataKey]?.value;
@@ -33,7 +34,7 @@ export default ({drizzle, drizzleState}) => {
 
     const donate = () => {
         if(canChangeMessage()) {
-            changeMessage.cacheSend(newMessage, {value: toWei(newDonation, "ether")});
+            changeMessage.cacheSend(newMessage, {value: toWei(newDonation, "ether"), from: drizzleState.accounts[0]});
         } else {
             //This is a hack, need to find the correct way to do this
            drizzle.contracts.ThresholdRelease.web3.eth.sendTransaction({from: drizzleState.accounts[0], value: toWei(newDonation, "ether"), to: drizzle.contracts.ThresholdRelease.options.address})
@@ -114,13 +115,15 @@ export default ({drizzle, drizzleState}) => {
                     </div>
                     <div className="flex mt-5 lg:mt-0 lg:ml-4">
                     <span className="hidden ml-3 sm:block">
-                        <button
-                            type="button"
-                            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            <LinkIcon className="w-5 h-5 mr-2 -ml-1 text-gray-500" aria-hidden="true"/>
-                            View Contract
-                        </button>
+                        <a href="https://rinkeby.etherscan.io/address/0x01c295fd8cb700112e07b4c854bc27ceefd6b35b">
+                            <button
+                                type="button"
+                                className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            >
+                                <LinkIcon className="w-5 h-5 mr-2 -ml-1 text-gray-500" aria-hidden="true"/>
+                                View Contract
+                            </button>
+                        </a>
                     </span>
 
                         <span className="sm:ml-3">
