@@ -67,10 +67,7 @@ export default ({drizzle, drizzleState}) => {
         setIsOpen(true);
     };
 
-    useEffect(() => {
-        updateView();
-    })
-
+    useEffect(updateView, []);
 
     const validEtherValue = (inputValue) => {
         try {
