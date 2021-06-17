@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {Fragment, useEffect, useState} from "react";
 import {Box, Button, Card, Flex, Heading, Tooltip, Modal, Progress, Field, Form} from 'rimble-ui';
 import {CheckIcon, ChevronDownIcon, CurrencyDollarIcon, LinkIcon, PencilIcon, InformationCircleIcon, InboxInIcon, FingerPrintIcon} from '@heroicons/react/solid'
@@ -68,7 +69,7 @@ export default ({drizzle, drizzleState}) => {
 
     useEffect(() => {
         updateView();
-    }, [])
+    })
 
 
     const validEtherValue = (inputValue) => {
@@ -115,7 +116,7 @@ export default ({drizzle, drizzleState}) => {
                     </div>
                     <div className="flex mt-5 lg:mt-0 lg:ml-4">
                     <span className="hidden ml-3 sm:block">
-                        <a href="https://rinkeby.etherscan.io/address/0x01c295fd8cb700112e07b4c854bc27ceefd6b35b">
+                        <a href="https://rinkeby.etherscan.io/address/0x01c295fd8cb700112e07b4c854bc27ceefd6b35b/">
                             <button
                                 type="button"
                                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -44,7 +44,11 @@ const DrizzleThresholdRelease = () => {
                                     <div className="rounded-md bg-red-50 p-4 align-middle container mx-auto my-auto">
                                         <div className="flex">
                                             <div className="flex-shrink-0">
-                                                <h1 className="h-5 w-5">🦊</h1>
+                                                <h1 className="h-5 w-5">
+                                                    <span role="img" aria-label="metamask fox">
+                                                        🦊
+                                                    </span>
+                                                </h1>
                                             </div>
                                             <div className="ml-3">
                                                 <h3 className="text-sm font-medium text-red-800">We can't find any Ethereum accounts!</h3>
